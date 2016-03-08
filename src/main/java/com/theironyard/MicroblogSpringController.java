@@ -17,7 +17,7 @@ public class MicroblogSpringController {
 
     ArrayList<Message> messages = new ArrayList<Message>();
 
-    @RequestMapping(path = "/", method = RequestMethod.GET)
+    @RequestMapping(path = "/", method = RequestMethod.GET) //model only on get routes when sending to html
     public String home(Model model, HttpSession session) {
         model.addAttribute("name", session.getAttribute("userName"));
         model.addAttribute("messages", messages);
