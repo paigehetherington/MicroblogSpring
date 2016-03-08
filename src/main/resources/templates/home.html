@@ -17,7 +17,15 @@
 </form>
 
 
+
+</form>
+
+
+
 <br/>
+<form action="/logout" method="post"/>
+<button type="submit">Logout</button>
+</form>
 
 Messages by {{name}}:
 <br/>
@@ -28,6 +36,7 @@ Messages by {{name}}:
         {{text}}
         <input type="hidden" value="{{id}}" name="id"/>
         <button type="submit">Delete</button>
+        <a href="/update-message?updateId={{id}}">Update Message</a>
     </li>
     </form>
     {{/messages}}

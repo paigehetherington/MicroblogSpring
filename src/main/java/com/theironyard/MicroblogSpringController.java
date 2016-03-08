@@ -1,5 +1,6 @@
 package com.theironyard;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,12 +16,15 @@ import java.util.ArrayList;
 @Controller
 public class MicroblogSpringController {
 
-    ArrayList<Message> messages = new ArrayList<Message>();
+    @Autowired
+    MessageRepository messages;
+
+    //ArrayList<Message> messages = new ArrayList<Message>();
 
     @RequestMapping(path = "/", method = RequestMethod.GET) //model only on get routes when sending to html
     public String home(Model model, HttpSession session) {
         model.addAttribute("name", session.getAttribute("userName"));
-        model.addAttribute("messages", messages);
+        model.addAttribute("messages", messages.findAll());
         return "home";
     }
 
@@ -31,17 +35,41 @@ public class MicroblogSpringController {
     }
 
     @RequestMapping(path = "/add-message", method = RequestMethod.POST)
-    public String message(Model model, String text) {
-        Message m = new Message(messages.size() + 1, text);
-        messages.add(m);
+    public String message(HttpSession session, String text) {
+        Message m = new Message(text);
+        messages.save(m);
         return "redirect:/";
     }
 
     @RequestMapping(path = "/delete-message", method = RequestMethod.POST)
-    public String deleteMessage(Model model, int id) {
-        messages.remove(id-1);
+    public String deleteMessage(HttpSession session, Integer id) {
+        messages.delete(id);
         return "redirect:/";
     }
+
+    @RequestMapping(path = "/update-message", method = RequestMethod.GET)
+    public String updateMessage(Model model, int updateId) {
+        Message m = messages.findOne(updateId);
+        model.addAttribute("message", m);
+        return "update";
+    }
+
+
+    @RequestMapping(path = "/update-message", method = RequestMethod.POST )
+    public String updateMessage(HttpSession session, int updateId, String updatedText) {
+        Message m = messages.findOne(updateId);
+        m.text = updatedText;
+        messages.save(m);
+        return "redirect:/";
+
+
+    }
+    @RequestMapping(path = "/logout", method = RequestMethod.POST)
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/";
+    }
+
 
 
 
